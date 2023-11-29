@@ -21,7 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.TextView;
 
@@ -216,18 +216,22 @@ public class NotificationListener extends CordovaPlugin {
     }
 
     private void parseNotification(Intent intent) {
-        StatusBarNotification sbn = intent.getParcelableExtra("sbn");
-        Bundle extras = sbn.getNotification().extras;
-        JSONObject returnObj = new JSONObject();
-        addProperty(returnObj, "title", extras.getString("android.title"));
-        addProperty(returnObj, "package", sbn.getPackageName());
-        addProperty(returnObj, "postTime", sbn.getPostTime());
-        addProperty(returnObj, "text", extras.getString("android.text"));
-        addProperty(returnObj, "textLines", extras.getString("android.textLines"));
-        PluginResult result = new PluginResult(PluginResult.Status.OK, returnObj);
-        result.setKeepCallback(true);
-        listenerCallback.sendPluginResult(result);
-    }
+            StatusBarNotification sbn = intent.getParcelableExtra("sbn");
+            Bundle extras = sbn.getNotification().extras;
+            JSONObject returnObj = new JSONObject();
+            addProperty(returnObj, "title", getExtra(extras, "android.title"));
+            addProperty(returnObj, "package", sbn.getPackageName());
+            addProperty(returnObj, "postTime", sbn.getPostTime());
+            addProperty(returnObj, "text", getExtra(extras, "android.text"));
+            addProperty(returnObj, "textLines", getExtraLines(extras, "android.textLines"));
+            addProperty(returnObj, "subText", getExtra(extras, "android.subText"));
+            addProperty(returnObj, "summaryText", getExtra(extras, "android.summaryText"));
+            addProperty(returnObj, "messages", getExtra(extras, "android.messages"));
+            addProperty(returnObj, "infoText", getExtra(extras, "android.infoText"));
+            PluginResult result = new PluginResult(PluginResult.Status.OK, returnObj);
+            result.setKeepCallback(true);
+            listenerCallback.sendPluginResult(result);
+        }
 
     @Override
     public void onDestroy() {
@@ -238,6 +242,23 @@ public class NotificationListener extends CordovaPlugin {
             nReceiver = null;
         }
         super.onDestroy();
+    }
+
+    private static String getExtra(Bundle extras, String extra) {
+        try {
+          return extras.get(extra).toString();
+        } catch (Exception e) {
+          return "";
+        }
+    }
+
+    private static String getExtraLines(Bundle extras, String extra) {
+      try {
+        CharSequence[] lines = extras.getCharSequenceArray(extra);
+        return lines[lines.length - 1].toString();
+      } catch (Exception e) {
+        return "";
+      }
     }
 
 }

@@ -1,5 +1,6 @@
 Android notification listener Cordova plugin
 ================================
+### Update: Added Android 13 support
 
 Installation
 --------
