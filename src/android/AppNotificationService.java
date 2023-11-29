@@ -3,7 +3,7 @@ package com.lou.cordova.plugin;
 import android.content.Intent;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 import java.util.List;
