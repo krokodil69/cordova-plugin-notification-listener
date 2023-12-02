@@ -225,9 +225,9 @@ public class NotificationListener extends CordovaPlugin {
             addProperty(returnObj, "text", getExtra(extras, "android.text"));
             addProperty(returnObj, "textLines", getExtraLines(extras, "android.textLines"));
             addProperty(returnObj, "subText", getExtra(extras, "android.subText"));
-            addProperty(returnObj, "summaryText", getExtra(extras, "android.summaryText"));
-            addProperty(returnObj, "messages", getExtra(extras, "android.messages"));
-            addProperty(returnObj, "infoText", getExtra(extras, "android.infoText"));
+            addProperty(returnObj, "id", sbn.getId());
+            addProperty(returnObj, "uid", sbn.getUid());
+            addProperty(returnObj, "key", sbn.getKey());
             PluginResult result = new PluginResult(PluginResult.Status.OK, returnObj);
             result.setKeepCallback(true);
             listenerCallback.sendPluginResult(result);
