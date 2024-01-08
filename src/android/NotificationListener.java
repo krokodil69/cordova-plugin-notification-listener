@@ -144,6 +144,7 @@ public class NotificationListener extends CordovaPlugin {
             Intent intent;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
             } else {
                 intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
             }
