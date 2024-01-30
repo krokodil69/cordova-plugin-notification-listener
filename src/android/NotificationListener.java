@@ -27,7 +27,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-import android.app.NotificationManager;
 
 public class NotificationListener extends CordovaPlugin {
 
@@ -84,10 +83,7 @@ public class NotificationListener extends CordovaPlugin {
 
     private void getActiveNotifications(CallbackContext callbackContext) {
         JSONArray notifications = new JSONArray();
-        Context context = cordova.getContext();
-        NotificationManager service = context.getSystemService(NotificationManager.class);
-
-        for (StatusBarNotification sbn : service.getActiveNotifications()) {
+        for (StatusBarNotification sbn : AppNotificationService.instance.getActiveNotifications()) {
             notifications.put(parseSbn(sbn));
         }
 

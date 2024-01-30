@@ -9,8 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppNotificationService extends NotificationListenerService {
+    public static AppNotificationService instance;
+
     private static final List<String> IGNORE_PKG = new ArrayList<String>() {{
-        add("com.android.systemui");
+         add("com.android.systemui");
+         add("com.google.android.gms");
+         add("com.android.vending");
+         add("android");
     }};
 
     @Override
@@ -25,6 +30,12 @@ public class AppNotificationService extends NotificationListenerService {
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
 
+    }
+
+    @Override
+    public void onListenerConnected ()
+    {
+        instance = AppNotificationService.this;
     }
 }
 
