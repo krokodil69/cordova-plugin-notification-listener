@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AppNotificationService extends NotificationListenerService {
     private static final List<String> IGNORE_PKG = new ArrayList<String>() {{
-        add("android");
+        add("com.android.systemui");
     }};
 
     @Override

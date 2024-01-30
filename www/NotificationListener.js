@@ -17,6 +17,9 @@ NotificationListener.prototype = {
     },
     addListener: function(successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, SERVICE_NAME, 'addListener', []);
+    },
+    getActiveNotifications: function(successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, SERVICE_NAME, 'getActiveNotifications', []);
     }
 };
 

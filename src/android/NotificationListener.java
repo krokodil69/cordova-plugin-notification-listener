@@ -1,12 +1,5 @@
 package com.lou.cordova.plugin;
 
-import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CallbackContext;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -34,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import android.app.NotificationManager;
 
 public class NotificationListener extends CordovaPlugin {
 
@@ -41,6 +35,7 @@ public class NotificationListener extends CordovaPlugin {
     private static final String LOG_TAG = "NotificationListener";
 
     private static final String ACTION_HAS_PERMISSION = "hasPermission";
+    private static final String ACTION_GET_ACTIVE_NOTIFICATIONS = "getActiveNotifications";
     private static final String ACTION_REQUEST_PERMISSION = "requestPermission";
     private static final String ACTION_IS_RUNNING = "isRunning";
     private static final String ACTION_TOGGLE = "toggle";
@@ -54,6 +49,9 @@ public class NotificationListener extends CordovaPlugin {
         switch (action) {
             case ACTION_HAS_PERMISSION:
                 isNotificationListerEnabled(callbackContext);
+                return true;
+            case ACTION_GET_ACTIVE_NOTIFICATIONS:
+                getActiveNotifications(callbackContext);
                 return true;
             case ACTION_REQUEST_PERMISSION:
                 requestPermissions();
@@ -82,6 +80,18 @@ public class NotificationListener extends CordovaPlugin {
         } catch (JSONException e) {
             LOG.d(LOG_TAG, "JSONException on put key: " + key + " value: " + value);
         }
+    }
+
+    private void getActiveNotifications(CallbackContext callbackContext) {
+        JSONArray notifications = new JSONArray();
+        Context context = cordova.getContext();
+        NotificationManager service = context.getSystemService(NotificationManager.class);
+
+        for (StatusBarNotification sbn : service.getActiveNotifications()) {
+            notifications.put(parseSbn(sbn));
+        }
+
+         callbackContext.success(notifications);
     }
 
     private void isNotificationListerEnabled(CallbackContext callbackContext) {
@@ -218,21 +228,23 @@ public class NotificationListener extends CordovaPlugin {
 
     private void parseNotification(Intent intent) {
             StatusBarNotification sbn = intent.getParcelableExtra("sbn");
-            Bundle extras = sbn.getNotification().extras;
-            JSONObject returnObj = new JSONObject();
-            addProperty(returnObj, "title", getExtra(extras, "android.title"));
-            addProperty(returnObj, "package", sbn.getPackageName());
-            addProperty(returnObj, "postTime", sbn.getPostTime());
-            addProperty(returnObj, "text", getExtra(extras, "android.text"));
-            addProperty(returnObj, "textLines", getExtraLines(extras, "android.textLines"));
-            addProperty(returnObj, "subText", getExtra(extras, "android.subText"));
-            addProperty(returnObj, "id", sbn.getId());
-            addProperty(returnObj, "uid", sbn.getUid());
-            addProperty(returnObj, "key", sbn.getKey());
-            PluginResult result = new PluginResult(PluginResult.Status.OK, returnObj);
+            PluginResult result = new PluginResult(PluginResult.Status.OK, parseSbn(sbn));
             result.setKeepCallback(true);
             listenerCallback.sendPluginResult(result);
         }
+
+    private JSONObject parseSbn(StatusBarNotification sbn) {
+        Bundle extras = sbn.getNotification().extras;
+        JSONObject returnObj = new JSONObject();
+        addProperty(returnObj, "title", getExtra(extras, "android.title"));
+        addProperty(returnObj, "package", sbn.getPackageName());
+        addProperty(returnObj, "postTime", sbn.getPostTime());
+        addProperty(returnObj, "text", getExtra(extras, "android.text"));
+        addProperty(returnObj, "textLines", getExtraLines(extras, "android.textLines"));
+        addProperty(returnObj, "subText", getExtra(extras, "android.subText"));
+        addProperty(returnObj, "id", sbn.getId());
+        return returnObj;
+    }
 
     @Override
     public void onDestroy() {
